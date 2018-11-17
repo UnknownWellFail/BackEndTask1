@@ -2,36 +2,74 @@ let express = require('express');
 let Request = require("request");
 let router = express.Router();
 
-/* POST*/
+/* POST request*/
 router.post('/', function (req, res) {
     let startTime = new Date().getTime();
     Request.get("https://jsonplaceholder.typicode.com/comments", (error, response, body) => {
         if (error) {
             return console.dir(error);
         }
-        let test = JSON.parse(body);
+        let data = JSON.parse(body);
         res.send({
-            popularAuthor: getMaxComments(test),
-            popularWords: getTopWords(test),
+            popularAuthor: getMaxComments(data),
+            popularWords: getTopWords(data, 5),
             excetionTime: new Date().getTime() - startTime
         });
     });
 });
 
-
-function getMaxComments(arr) {
-    let tmp = [];
+/**
+ * Generate array as {key:key, value:value} from array
+ * This method counts the  number of keys in data array
+ * @param key - key in needed array
+ * @param value - name of param in returned array
+ * @param array - data array
+ * @param indexKey - used or not key in comparing data
+ * @returns {Array}
+ */
+function generateObjArray(key, value, array, indexKey) {
+    let result = [];
     let index;
-    for (msg of arr) {
-        index = tmp.findIndex(mssg => mssg.email === msg.email);
+    for (msg of array) {
+        if (indexKey)
+            index = result.findIndex(mssg => mssg[key] === msg[key]);
+        else
+            index = result.findIndex(mssg => mssg[key] === msg);
         if (index !== -1) {
-            tmp[index].count += 1;
+            result[index][value] += 1;
         } else {
-            tmp[tmp.length] = {email: msg.email, count: 1};
+            if (indexKey)
+                result[result.length] = {[key]: msg[key], [value]: 1};
+            else
+                result[result.length] = {[key]: msg, [value]: 1};
         }
     }
-    let max = {email: tmp[0].email, comments: tmp[0].count};
-    for (item of tmp) {
+    return result;
+}
+
+/**
+ * Converts comments array to array with all words from body of comment
+ * @param array - comments data array
+ * @returns Words {Array}
+ */
+function getWordsFromDataBody(array) {
+    let words = [];
+    for (msg of array) {
+        words = words.concat(msg.body.split(/\W/).filter(String));
+    }
+    return words;
+}
+
+
+/**
+ * Getting max vaule of comments from one author
+ * @param arr - comments data array
+ * @returns object as {email:'',comments:''}
+ */
+function getMaxComments(arr) {
+    let array = generateObjArray('email', 'count', arr, true);
+    let max = {email: array[0].email, comments: array[0].count};
+    for (item of array) {
         if (item.count > max.count) {
             max.popularAuthor.comments = item.count;
             max.popularAuthor.email = item.email;
@@ -40,26 +78,22 @@ function getMaxComments(arr) {
     return max;
 }
 
-function getTopWords(arr) {
-    let words = [];
-    for (msg of arr) {
-        words = words.concat(msg.body.split(/\W/).filter(String));
-    }
-    let res = [];
-    let index;
-    for (word of words) {
-        index = res.findIndex(w => w.word === word);
-        if (index !== -1) {
-            res[index].count += 1;
-        } else {
-            res[res.length] = {word: word, count: 1};
-        }
-    }
+/**
+ * Getting top @limit words from comments data array
+ * @param arr - array of comments
+ * @param limit - required number of values
+ * @returns array as {word: number of words}
+ */
+function getTopWords(arr, limit) {
+    let words = getWordsFromDataBody(arr);
+    let res = generateObjArray('word', 'count', words, false);
+
+    //Sorting and shaping output
     res.sort((a, b) => {
         if (a.count < b.count) return 1;
         if (a.count > b.count) return -1;
     });
-    res = res.slice(0, 5);
+    res = res.slice(0, limit);
     let result = {};
     for (item of res) {
         result[item.word] = item.count;
