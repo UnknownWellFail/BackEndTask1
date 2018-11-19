@@ -1,4 +1,5 @@
 const createError = require('http-errors');
+/*import express from 'express'*/
 const express = require('express');
 const cookieParser = require('cookie-parser');
 const logger = require('morgan');
@@ -15,13 +16,14 @@ app.use(cookieParser());
 
 app.use('/api/comments', indexRouter);
 
-// catch 404 and forward to error handler
 app.use(function (req, res, next) {
+  res.status(404).send('404');
   next(createError(404));
 });
 
 app.use(function (err, req, res) {
   res.status(err.status || 500).send(err.message);
 });
+
 
 module.exports = app;

@@ -1,4 +1,5 @@
 const express = require('express');
+
 const Request = require('request');
 
 const router = express.Router();
@@ -12,6 +13,12 @@ router.post('/', function (req, res) {
       return console.dir(error.message);
     }
     const data = JSON.parse(body);
+
+    if (!Array.isArray(data) || data === null || typeof  data === 'undefined' || !Object.keys(data).length) {
+      res.send('Empty data');
+      return console.dir('Empty data');
+    }
+
     res.send({
       popularAuthor: getMaxComments(data),
       popularWords: getTopWords(data, 5),
@@ -29,7 +36,7 @@ router.post('/', function (req, res) {
  * @param indexKey - used or not key in comparing data
  * @returns {Array}
  */
-generateObjArray = (key, value, array, indexKey) => {
+const generateObjArray = (key, value, array, indexKey) => {
   const result = [];
   let index;
   for (msg of array) {
@@ -49,12 +56,13 @@ generateObjArray = (key, value, array, indexKey) => {
   return result;
 };
 
+
 /**
  * Converts comments array to array with all words from body of comment
  * @param array - comments data array
  * @returns Words {Array}
  */
-getWordsFromDataBody = (array) => {
+const getWordsFromDataBody = (array) => {
   let words = [];
   for (msg of array) {
     words = words.concat(msg.body.split(/\W/).filter(String));
@@ -68,13 +76,17 @@ getWordsFromDataBody = (array) => {
  * @param arr - comments data array
  * @returns object as {email:'',comments:''}
  */
-getMaxComments = (arr) => {
+const getMaxComments = (arr) => {
   const array = generateObjArray('email', 'count', arr, true);
+
+  if (array.length === 0) {
+    return {comments: '', email: ''};
+  }
   const max = {email: array[0].email, comments: array[0].count};
   for (item of array) {
-    if (item.count > max.count) {
-      max.popularAuthor.comments = item.count;
-      max.popularAuthor.email = item.email;
+    if (item.count > max.comments) {
+      max.comments = item.count;
+      max.email = item.email;
     }
   }
   return max;
@@ -86,7 +98,7 @@ getMaxComments = (arr) => {
  * @param limit - required number of values
  * @returns array as {word: number of words}
  */
-getTopWords = (arr, limit) => {
+const getTopWords = (arr, limit) => {
   const words = getWordsFromDataBody(arr);
   let res = generateObjArray('word', 'count', words, false);
 
