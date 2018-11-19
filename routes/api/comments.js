@@ -13,7 +13,7 @@ router.post('/', function (req, res) {
         res.send({
             popularAuthor: getMaxComments(data),
             popularWords: getTopWords(data, 5),
-            excetionTime: new Date().getTime() - startTime
+            executionTime: new Date().getTime() - startTime
         });
     });
 });
