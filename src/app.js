@@ -1,10 +1,10 @@
-const createError = require('http-errors');
-/*import express from 'express'*/
-const express = require('express');
-const cookieParser = require('cookie-parser');
-const logger = require('morgan');
+import createError from 'http-errors';
+import express from 'express'
 
-const indexRouter = require('./routes/api/comments');
+import cookieParser from 'cookie-parser';
+import logger from 'morgan';
+
+import indexRouter from './routes/api/comments';
 
 const app = express();
 

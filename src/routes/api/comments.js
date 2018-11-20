@@ -1,6 +1,6 @@
-const express = require('express');
+import express from 'express';
 
-const Request = require('request');
+import Request from 'request';
 
 const router = express.Router();
 
@@ -39,7 +39,7 @@ router.post('/', function (req, res) {
 const generateObjArray = (key, value, array, indexKey) => {
   const result = [];
   let index;
-  for (msg of array) {
+  for (const msg of array) {
     if (indexKey)
       index = result.findIndex(mssg => mssg[key] === msg[key]);
     else
@@ -64,7 +64,7 @@ const generateObjArray = (key, value, array, indexKey) => {
  */
 const getWordsFromDataBody = (array) => {
   let words = [];
-  for (msg of array) {
+  for (const msg of array) {
     words = words.concat(msg.body.split(/\W/).filter(String));
   }
   return words;
@@ -83,7 +83,7 @@ const getMaxComments = (arr) => {
     return {comments: '', email: ''};
   }
   const max = {email: array[0].email, comments: array[0].count};
-  for (item of array) {
+  for (const item of array) {
     if (item.count > max.comments) {
       max.comments = item.count;
       max.email = item.email;
@@ -110,7 +110,7 @@ const getTopWords = (arr, limit) => {
   res = res.slice(0, limit);
 
   const result = {};
-  for (item of res) {
+  for (const item of res) {
     result[item.word] = item.count;
   }
   return result;

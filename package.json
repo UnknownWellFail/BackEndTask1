@@ -3,7 +3,8 @@
   "version": "0.0.0",
   "private": true,
   "scripts": {
-    "start": "node  ./bin/www"
+    "start": "babel src -d dist --preset es2015",
+    "watch": "babel src -d dist --preset es2015 -w"
   },
   "dependencies": {
     "@babel/polyfill": "^7.0.0",
