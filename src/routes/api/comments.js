@@ -109,10 +109,8 @@ const getTopWords = (arr, limit) => {
   });
   res = res.slice(0, limit);
 
-  const result = {};
-  for (const item of res) {
-    result[item.word] = item.count;
-  }
+  const result = Object.assign({},...res.map(item=>({[item.word]:item.count})));
+  
   return result;
 };
 

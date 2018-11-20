@@ -3,25 +3,21 @@
   "version": "0.0.0",
   "private": true,
   "scripts": {
-    "start": "babel src -d dist --preset es2015",
-    "watch": "babel src -d dist --preset es2015 -w"
+    "start": "babel src -d dist",
+    "watch": "babel src -d dist"
   },
   "dependencies": {
-    "@babel/polyfill": "^7.0.0",
     "cookie-parser": "~1.4.3",
     "debug": "~2.6.9",
     "express": "~4.16.0",
     "http-errors": "~1.6.2",
     "morgan": "~1.9.0",
-    "pug": "2.0.0-beta11",
     "request": "^2.88.0"
   },
   "devDependencies": {
     "@babel/cli": "^7.1.5",
     "@babel/core": "^7.1.6",
-    "@babel/preset-env": "^7.1.6",
-    "babel-plugin-import": "^1.11.0",
-    "babel-preset-env": "^1.7.0",
-    "babel-register": "^6.26.0"
+    "@babel/plugin-syntax-dynamic-import": "^7.0.0",
+    "@babel/preset-env": "^7.1.6"
   }
 }
